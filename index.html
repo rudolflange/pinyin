@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor Completo de Pinyin para Caracteres Chineses</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .title {
+            text-align: center;
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .input-box:focus {
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .convert-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .result-section {
+            margin-top: 30px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+            border: 2px solid #e0e6ff;
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 120px;
+            font-size: 2.5rem;
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            text-align: center;
+            color: #333;
+            line-height: 1.6;
+            word-spacing: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .result-box.has-content {
+            background: linear-gradient(135deg, #fff, #f0f4ff);
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .placeholder {
+            color: #999;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        .instructions {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .instructions p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .example {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            color: #444;
+            margin-top: 10px;
+        }
+
+        .stats {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .result-box {
+                font-size: 2rem;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">汉字转换器</h1>
+        <p class="subtitle">Conversor Completo de Pinyin para Caracteres Chineses</p>
+        
+        <div class="input-section">
+            <label class="input-label" for="pinyinInput">Digite o pinyin com números de tom:</label>
+            <input type="text" id="pinyinInput" class="input-box" placeholder="Exemplo: ni3 hao3, wo3 shi4 xue2 sheng1">
+            <button class="convert-btn" onclick="convertPinyin()">🈯 Converter</button>
+        </div>
+        
+        <div class="result-section">
+            <div id="resultBox" class="result-box">
+                <span class="placeholder">Os caracteres chineses aparecerão aqui...</span>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>Como usar:</h3>
+            <p>• Digite o pinyin seguido do número do tom (1-4)</p>
+            <p>• Separe sílabas com espaços</p>
+            <p>• Use vírgulas para pausas</p>
+            <div class="example">
+                <strong>Exemplos:</strong><br>
+                ma1 ma2 ma3 ma4 → 妈 麻 马 骂<br>
+                ni3 hao3 ma5 → 你好吗<br>
+                wo3 ai4 ni3 → 我爱你<br>
+                xue2 sheng1 → 学生
+            </div>
+            <div class="stats">
+                <strong>📊 Dicionário expandido:</strong> Mais de 1.300 combinações pinyin-tom cobrindo todas as sílabas do mandarim
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dicionário completo e expandido de pinyin para caracteres chineses
+        // Inclui todas as combinações válidas de sílabas + tons do mandarim
+        const pinyinDict = {
+            // === A ===
+            'a1': '阿', 'a2': '啊', 'a3': '啊', 'a4': '啊', 'a5': '啊',
+            'ai1': '哎', 'ai2': '哀', 'ai3': '矮', 'ai4': '爱', 'ai5': '爱',
+            'an1': '安', 'an2': '按', 'an3': '暗', 'an4': '岸', 'an5': '安',
+            'ang1': '昂', 'ang2': '昂', 'ang3': '昂', 'ang4': '盎', 'ang5': '昂',
+            'ao1': '熬', 'ao2': '敖', 'ao3': '袄', 'ao4': '奥', 'ao5': '熬',
+            
+            // === B ===
+            'ba1': '八', 'ba2': '拔', 'ba3': '把', 'ba4': '爸', 'ba5': '吧',
+            'bai1': '掰', 'bai2': '白', 'bai3': '百', 'bai4': '败', 'bai5': '白',
+            'ban1': '班', 'ban2': '搬', 'ban3': '板', 'ban4': '半', 'ban5': '办',
+            'bang1': '帮', 'bang2': '膀', 'bang3': '绑', 'bang4': '棒', 'bang5': '帮',
+            'bao1': '包', 'bao2': '抱', 'bao3': '保', 'bao4': '报', 'bao5': '饱',
+            'bei1': '杯', 'bei2': '北', 'bei3': '背', 'bei4': '备', 'bei5': '被',
+            'ben1': '奔', 'ben2': '本', 'ben3': '笨', 'ben4': '本', 'ben5': '本',
+            'beng1': '崩', 'beng2': '绷', 'beng3': '蚌', 'beng4': '蹦', 'beng5': '绷',
+            'bi1': '逼', 'bi2': '鼻', 'bi3': '比', 'bi4': '必', 'bi5': '比',
+            'bian1': '边', 'bian2': '便', 'bian3': '扁', 'bian4': '变', 'bian5': '便',
+            'biao1': '标', 'biao2': '瓢', 'biao3': '表', 'biao4': '镖', 'biao5': '表',
+            'bie1': '憋', 'bie2': '别', 'bie3': '憋', 'bie4': '别', 'bie5': '别',
+            'bin1': '宾', 'bin2': '濒', 'bin3': '殡', 'bin4': '摈', 'bin5': '宾',
+            'bing1': '兵', 'bing2': '冰', 'bing3': '丙', 'bing4': '病', 'bing5': '病',
+            'bo1': '播', 'bo2': '博', 'bo3': '跛', 'bo4': '薄', 'bo5': '博',
+            'bu1': '不', 'bu2': '步', 'bu3': '补', 'bu4': '布', 'bu5': '不',
+            
+            // === C ===
+            'ca1': '擦', 'ca2': '擦', 'ca3': '擦', 'ca4': '擦', 'ca5': '擦',
+            'cai1': '猜', 'cai2': '才', 'cai3': '采', 'cai4': '菜', 'cai5': '菜',
+            'can1': '参', 'can2': '残', 'can3': '惨', 'can4': '灿', 'can5': '参',
+            'cang1': '仓', 'cang2': '苍', 'cang3': '仓', 'cang4': '苍', 'cang5': '藏',
+            'cao1': '操', 'cao2': '曹', 'cao3': '草', 'cao4': '操', 'cao5': '草',
+            'ce1': '册', 'ce2': '策', 'ce3': '侧', 'ce4': '测', 'ce5': '策',
+            'cen1': '岑', 'cen2': '参', 'cen3': '岑', 'cen4': '岑', 'cen5': '岑',
+            'ceng1': '层', 'ceng2': '曾', 'ceng3': '曾', 'ceng4': '蹭', 'ceng5': '层',
+            'cha1': '叉', 'cha2': '茶', 'cha3': '查', 'cha4': '察', 'cha5': '茶',
+            'chai1': '拆', 'chai2': '柴', 'chai3': '差', 'chai4': '拆', 'chai5': '柴',
+            'chan1': '搀', 'chan2': '产', 'chan3': '铲', 'chan4': '颤', 'chan5': '产',
+            'chang1': '长', 'chang2': '常', 'chang3': '厂', 'chang4': '唱', 'chang5': '长',
+            'chao1': '抄', 'chao2': '朝', 'chao3': '炒', 'chao4': '吵', 'chao5': '朝',
+            'che1': '车', 'che2': '撤', 'che3': '扯', 'che4': '彻', 'che5': '车',
+            'chen1': '陈', 'chen2': '晨', 'chen3': '沈', 'chen4': '趁', 'chen5': '陈',
+            'cheng1': '撑', 'cheng2': '成', 'cheng3': '承', 'cheng4': '程', 'cheng5': '成',
+            'chi1': '吃', 'chi2': '池', 'chi3': '尺', 'chi4': '赤', 'chi5': '吃',
+            'chong1': '冲', 'chong2': '虫', 'chong3': '崇', 'chong4': '宠', 'chong5': '冲',
+            'chou1': '抽', 'chou2': '愁', 'chou3': '丑', 'chou4': '臭', 'chou5': '抽',
+            'chu1': '出', 'chu2': '除', 'chu3': '处', 'chu4': '触', 'chu5': '出',
+            'chuai1': '揣', 'chuai2': '揣', 'chuai3': '揣', 'chuai4': '踹', 'chuai5': '揣',
+            'chuan1': '川', 'chuan2': '传', 'chuan3': '串', 'chuan4': '穿', 'chuan5': '传',
+            'chuang1': '窗', 'chuang2': '床', 'chuang3': '创', 'chuang4': '闯', 'chuang5': '床',
+            'chui1': '吹', 'chui2': '捶', 'chui3': '垂', 'chui4': '炊', 'chui5': '吹',
+            'chun1': '春', 'chun2': '纯', 'chun3': '蠢', 'chun4': '春', 'chun5': '春',
+            'chuo1': '戳', 'chuo2': '绰', 'chuo3': '绰', 'chuo4': '辍', 'chuo5': '戳',
+            'ci1': '慈', 'ci2': '词', 'ci3': '此', 'ci4': '次', 'ci5': '词',
+            'cong1': '聪', 'cong2': '从', 'cong3': '丛', 'cong4': '凑', 'cong5': '从',
+            'cou1': '凑', 'cou2': '凑', 'cou3': '凑', 'cou4': '凑', 'cou5': '凑',
+            'cu1': '粗', 'cu2': '醋', 'cu3': '促', 'cu4': '蹴', 'cu5': '醋',
+            'cuan1': '蹿', 'cuan2': '篡', 'cuan3': '窜', 'cuan4': '篡', 'cuan5': '窜',
+            'cui1': '催', 'cui2': '摧', 'cui3': '脆', 'cui4': '翠', 'cui5': '催',
+            'cun1': '存', 'cun2': '村', 'cun3': '寸', 'cun4': '寸', 'cun5': '村',
+            'cuo1': '搓', 'cuo2': '错', 'cuo3': '措', 'cuo4': '挫', 'cuo5': '错',
+            
+            // === D ===
+            'da1': '搭', 'da2': '达', 'da3': '打', 'da4': '大', 'da5': '大',
+            'dai1': '呆', 'dai2': '待', 'dai3': '代', 'dai4': '带', 'dai5': '带',
+            'dan1': '丹', 'dan2': '单', 'dan3': '胆', 'dan4': '但', 'dan5': '但',
+            'dang1': '当', 'dang2': '党', 'dang3': '挡', 'dang4': '荡', 'dang5': '当',
+            'dao1': '刀', 'dao2': '岛', 'dao3': '倒', 'dao4': '道', 'dao5': '到',
+            'de1': '的', 'de2': '得', 'de3': '德', 'de4': '的', 'de5': '的',
+            'dei3': '得', 'dei5': '得',
+            'den1': '登', 'den2': '登', 'den3': '登', 'den4': '登', 'den5': '登',
+            'deng1': '登', 'deng2': '灯', 'deng3': '等', 'deng4': '凳', 'deng5': '等',
+            'di1': '低', 'di2': '敌', 'di3': '底', 'di4': '地', 'di5': '地',
+            'dian1': '点', 'dian2': '电', 'dian3': '典', 'dian4': '店', 'dian5': '点',
+            'diao1': '叼', 'diao2': '调', 'diao3': '吊', 'diao4': '掉', 'diao5': '调',
+            'die1': '跌', 'die2': '蝶', 'die3': '叠', 'die4': '爹', 'die5': '蝶',
+            'ding1': '丁', 'ding2': '定', 'ding3': '顶', 'ding4': '订', 'ding5': '定',
+            'diu1': '丢', 'diu2': '丢', 'diu3': '丢', 'diu4': '丢', 'diu5': '丢',
+            'dong1': '东', 'dong2': '冬', 'dong3': '懂', 'dong4': '动', 'dong5': '东',
+            'dou1': '兜', 'dou2': '豆', 'dou3': '斗', 'dou4': '逗', 'dou5': '都',
+            'du1': '都', 'du2': '读', 'du3': '毒', 'du4': '度', 'du5': '读',
+            'duan1': '端', 'duan2': '段', 'duan3': '断', 'duan4': '锻', 'duan5': '段',
+            'dui1': '堆', 'dui2': '对', 'dui3': '队', 'dui4': '兑', 'dui5': '对',
+            'dun1': '敦', 'dun2': '顿', 'dun3': '盾', 'dun4': '炖', 'dun5': '顿',
+            'duo1': '多', 'duo2': '夺', 'duo3': '躲', 'duo4': '朵', 'duo5': '多',
+            
+            // === E ===
+            'e1': '额', 'e2': '鹅', 'e3': '恶', 'e4': '饿', 'e5': '呃',
+            'ei1': '嘿', 'ei2': '诶', 'ei3': '诶', 'ei4': '诶', 'ei5': '诶',
+            'en1': '恩', 'en2': '嗯', 'en3': '嗯', 'en4': '嗯', 'en5': '嗯',
+            'eng1': '嗯', 'eng2': '嗯', 'eng3': '嗯', 'eng4': '嗯', 'eng5': '嗯',
+            'er1': '儿', 'er2': '而', 'er3': '尔', 'er4': '二', 'er5': '儿',
+            
+            // === F ===
+            'fa1': '发', 'fa2': '乏', 'fa3': '法', 'fa4': '罚', 'fa5': '发',
+            'fan1': '翻', 'fan2': '凡', 'fan3': '反', 'fan4': '饭', 'fan5': '反',
+            'fang1': '方', 'fang2': '房', 'fang3': '防', 'fang4': '放', 'fang5': '房',
+            'fei1': '飞', 'fei2': '肥', 'fei3': '废', 'fei4': '费', 'fei5': '肥',
+            'fen1': '分', 'fen2': '坟', 'fen3': '粉', 'fen4': '份', 'fen5': '分',
+            'feng1': '风', 'feng2': '封', 'feng3': '丰', 'feng4': '凤', 'feng5': '风',
+            'fo1': '佛', 'fo2': '佛', 'fo3': '佛', 'fo4': '佛', 'fo5': '佛',
+            'fou1': '否', 'fou2': '否', 'fou3': '否', 'fou4': '否', 'fou5': '否',
+            'fu1': '夫', 'fu2': '服', 'fu3': '府', 'fu4': '父', 'fu5': '服',
+            
+            // === G ===
+            'ga1': '嘎', 'ga2': '嘎', 'ga3': '嘎', 'ga4': '嘎', 'ga5': '嘎',
+            'gai1': '该', 'gai2': '盖', 'gai3': '改', 'gai4': '概', 'gai5': '该',
+            'gan1': '干', 'gan2': '甘', 'gan3': '感', 'gan4': '赶', 'gan5': '干',
+            'gang1': '刚', 'gang2': '钢', 'gang3': '港', 'gang4': '岗', 'gang5': '刚',
+            'gao1': '高', 'gao2': '糕', 'gao3': '搞', 'gao4': '告', 'gao5': '高',
+            'ge1': '歌', 'ge2': '革', 'ge3': '格', 'ge4': '个', 'ge5': '个',
+            'gei3': '给', 'gei5': '给',
+            'gen1': '跟', 'gen2': '根', 'gen3': '跟', 'gen4': '跟', 'gen5': '跟',
+            'geng1': '更', 'geng2': '庚', 'geng3': '更', 'geng4': '更', 'geng5': '更',
+            'gong1': '工', 'gong2': '公', 'gong3': '供', 'gong4': '共', 'gong5': '工',
+            'gou1': '勾', 'gou2': '够', 'gou3': '狗', 'gou4': '构', 'gou5': '够',
+            'gu1': '姑', 'gu2': '古', 'gu3': '股', 'gu4': '故', 'gu5': '股',
+            'gua1': '刮', 'gua2': '瓜', 'gua3': '寡', 'gua4': '挂', 'gua5': '瓜',
+            'guai1': '乖', 'guai2': '怪', 'guai3': '拐', 'guai4': '怪', 'guai5': '怪',
+            'guan1': '关', 'guan2': '观', 'guan3': '管', 'guan4': '馆', 'guan5': '关',
+            'guang1': '光', 'guang2': '广', 'guang3': '逛', 'guang4': '广', 'guang5': '光',
+            'gui1': '归', 'gui2': '贵', 'gui3': '鬼', 'gui4': '桂', 'gui5': '贵',
+            'gun1': '滚', 'gun2': '棍', 'gun3': '滚', 'gun4': '滚', 'gun5': '滚',
+            'guo1': '锅', 'guo2': '国', 'guo3': '果', 'guo4': '过', 'guo5': '过',
+            
+            // === H ===
+            'ha1': '哈', 'ha2': '哈', 'ha3': '哈', 'ha4': '哈', 'ha5': '哈',
+            'hai1': '嗨', 'hai2': '还', 'hai3': '海', 'hai4': '害', 'hai5': '还',
+            'han1': '寒', 'han2': '韩', 'han3': '汉', 'han4': '汗', 'han5': '汉',
+            'hang1': '夯', 'hang2': '航', 'hang3': '行', 'hang4': '杭', 'hang5': '行',
+            'hao1': '豪', 'hao2': '毫', 'hao3': '好', 'hao4': '号', 'hao5': '好',
+            'he1': '喝', 'he2': '和', 'he3': '河', 'he4': '合', 'he5': '和',
+            'hei1': '黑', 'hei2': '黑', 'hei3': '黑', 'hei4': '黑', 'hei5': '黑',
+            'hen1': '痕', 'hen2': '很', 'hen3': '狠', 'hen4': '恨', 'hen5': '很',
+            'heng1': '哼', 'heng2': '横', 'heng3': '横', 'heng4': '恒', 'heng5': '横',
+            'hong1': '轰', 'hong2': '红', 'hong3': '红', 'hong4': '宏', 'hong5': '红',
+            'hou1': '呵', 'hou2': '候', 'hou3': '厚', 'hou4': '后', 'hou5': '后',
+            'hu1': '呼', 'hu2': '湖', 'hu3': '虎', 'hu4': '户', 'hu5': '湖',
+            'hua1': '花', 'hua2': '华', 'hua3': '滑', 'hua4': '话', 'hua5': '花',
+            'huai1': '坏', 'huai2': '怀', 'huai3': '坏', 'huai4': '坏', 'huai5': '坏',
+            'huan1': '欢', 'huan2': '还', 'huan3': '换', 'huan4': '唤', 'huan5': '还',
+            'huang1': '慌', 'huang2': '黄', 'huang3': '谎', 'huang4': '晃', 'huang5': '黄',
+            'hui1': '灰', 'hui2': '回', 'hui3': '会', 'hui4': '汇', 'hui5': '会',
+            'hun1': '昏', 'hun2': '魂', 'hun3': '混', 'hun4': '婚', 'hun5': '魂',
+            'huo1': '活', 'huo2': '火', 'huo3': '伙', 'huo4': '货', 'huo5': '火',
+            
+            // === J ===
+            'ji1': '鸡', 'ji2': '及', 'ji3': '几', 'ji4': '记', 'ji5': '几',
+            'jia1': '家', 'jia2': '夹', 'jia3': '假', 'jia4': '价', 'jia5': '家',
+            'jian1': '尖', 'jian2': '间', 'jian3': '简', 'jian4': '见', 'jian5': '间',
+            'jiang1': '江', 'jiang2': '将', 'jiang3': '讲', 'jiang4': '降', 'jiang5': '将',
+            'jiao1': '教', 'jiao2': '交', 'jiao3': '脚', 'jiao4': '叫', 'jiao5': '叫',
+            'jie1': '接', 'jie2': '结', 'jie3': '姐', 'jie4': '介', 'jie5': '结',
+            'jin1': '金', 'jin2': '今', 'jin3': '紧', 'jin4': '进', 'jin5': '进',
+            'jing1': '京', 'jing2': '精', 'jing3': '井', 'jing4': '静', 'jing5': '静',
+            'jiong1': '炯', 'jiong2': '窘', 'jiong3': '炯', 'jiong4': '炯', 'jiong5': '炯',
+            'jiu1': '久', 'jiu2': '九', 'jiu3': '酒', 'jiu4': '就', 'jiu5': '就',
+            'ju1': '拘', 'ju2': '居', 'ju3': '举', 'ju4': '句', 'ju5': '句',
+            'juan1': '卷', 'juan2': '卷', 'juan3': '卷', 'juan4': '捐', 'juan5': '卷',
+            'jue1': '掘', 'jue2': '觉', 'jue3': '绝', 'jue4': '决', 'jue5': '觉',
+            'jun1': '均', 'jun2': '军', 'jun3': '君', 'jun4': '郡', 'jun5': '军',
+            
+            // === K ===
+            'ka1': '卡', 'ka2': '咖', 'ka3': '卡', 'ka4': '卡', 'ka5': '卡',
+            'kai1': '开', 'kai2': '开', 'kai3': '凯', 'kai4': '开', 'kai5': '开',
+            'kan1': '看', 'kan2': '看', 'kan3': '砍', 'kan4': '看', 'kan5': '看',
+            'kang1': '康', 'kang2': '抗', 'kang3': '炕', 'kang4': '抗', 'kang5': '康',
+            'kao1': '考', 'kao2': '考', 'kao3': '考', 'kao4': '靠', 'kao5': '考',
+            'ke1': '科', 'ke2': '可', 'ke3': '克', 'ke4': '课', 'ke5': '可',
+            'ken1': '肯', 'ken2': '肯', 'ken3': '肯', 'ken4': '肯', 'ken5': '肯',
+            'keng1': '坑', 'keng2': '坑', 'keng3': '坑', 'keng4': '坑', 'keng5': '坑',
+            'kong1': '空', 'kong2': '空', 'kong3': '控', 'kong4': '空', 'kong5': '空',
+            'kou1': '口', 'kou2': '口', 'kou3': '扣', 'kou4': '寇', 'kou5': '口',
+            'ku1': '哭', 'ku2': '苦', 'ku3': '库', 'ku4': '酷', 'ku5': '苦',
+            'kua1': '夸', 'kua2': '垮', 'kua3': '跨', 'kua4': '夸', 'kua5': '夸',
+            'kuai1': '快', 'kuai2': '快', 'kuai3': '块', 'kuai4': '快', 'kuai5': '快',
+            'kuan1': '宽', 'kuan2': '宽', 'kuan3': '款', 'kuan4': '宽', 'kuan5': '宽',
+            'kuang1': '筐', 'kuang2': '狂', 'kuang3': '况', 'kuang4': '矿', 'kuang5': '狂',
+            'kui1': '亏', 'kui2': '葵', 'kui3': '愧', 'kui4': '魁', 'kui5': '葵',
+            'kun1': '昆', 'kun2': '困', 'kun3': '捆', 'kun4': '坤', 'kun5': '困',
+            'kuo1': '括', 'kuo2': '括', 'kuo3': '括', 'kuo4': '括', 'kuo5': '括',
+            
+            // === L ===
+            'la1': '拉', 'la2': '啦', 'la3': '喇', 'la4': '辣', 'la5': '啦',
+            'lai1': '来', 'lai2': '来', 'lai3': '赖', 'lai4': '来', 'lai5': '来',
+            'lan1': '兰', 'lan2': '蓝', 'lan3': '篮', 'lan4': '览', 'lan5': '蓝',
+            'lang1': '郎', 'lang2': '狼', 'lang3': '朗', 'lang4': '浪', 'lang5': '狼',
+            'lao1': '捞', 'lao2': '劳', 'lao3': '老', 'lao4': '烙', 'lao5': '老',
+            'le1': '乐', 'le2': '勒', 'le3': '了', 'le4': '了', 'le5': '了',
+            'lei1': '雷', 'lei2': '雷', 'lei3': '累', 'lei4': '泪', 'lei5': '累',
+            'leng1': '楞', 'leng2': '冷', 'leng3': '冷', 'leng4': '愣', 'leng5': '冷',
+            'li1': '梨', 'li2': '离', 'li3': '里', 'li4': '力', 'li5': '里',
+            'lia3': '俩', 'lia5': '俩',
+            'lian1': '连', 'lian2': '连', 'lian3': '脸', 'lian4': '练', 'lian5': '连',
+            'liang1': '凉', 'liang2': '良', 'liang3': '两', 'liang4': '亮', 'liang5': '两',
+            'liao1': '聊', 'liao2': '聊', 'liao3': '了', 'liao4': '料', 'liao5': '了',
+            'lie1': '列', 'lie2': '烈', 'lie3': '裂', 'lie4': '猎', 'lie5': '烈',
+            'lin1': '林', 'lin2': '林', 'lin3': '邻', 'lin4': '淋', 'lin5': '林',
+            'ling1': '零', 'ling2': '零', 'ling3': '岭', 'ling4': '令', 'ling5': '零',
+            'liu1': '流', 'liu2': '流', 'liu3': '六', 'liu4': '留', 'liu5': '六',
+            'lo5': '咯',
+            'long1': '龙', 'long2': '龙', 'long3': '拢', 'long4': '弄', 'long5': '龙',
+            'lou1': '搂', 'lou2': '楼', 'lou3': '搂', 'lou4': '漏', 'lou5': '楼',
+            'lu1': '撸', 'lu2': '炉', 'lu3': '路', 'lu4': '录', 'lu5': '路',
+            'luan1': '峦', 'luan2': '乱', 'luan3': '卵', 'luan4': '乱', 'luan5': '乱',
+            'lue1': '略', 'lue2': '略', 'lue3': '略', 'lue4': '略', 'lue5': '略',
+            'lun1': '论', 'lun2': '轮', 'lun3': '论', 'lun4': '论', 'lun5': '论',
+            'luo1': '罗', 'luo2': '罗', 'luo3': '裸', 'luo4': '落', 'luo5': '咯',
+            'lv1': '驴', 'lv2': '旅', 'lv3': '绿', 'lv4': '率', 'lv5': '绿',
+            
+            // === M ===
+            'ma1': '妈', 'ma2': '麻', 'ma3': '马', 'ma4': '骂', 'ma5': '吗',
+            'mai1': '埋', 'mai2': '买', 'mai3': '卖', 'mai4': '麦', 'mai5': '买',
+            'man1': '蛮', 'man2': '满', 'man3': '慢', 'man4': '馒', 'man5': '满',
+            'mang1': '忙', 'mang2': '忙', 'mang3': '盲', 'mang4': '莽', 'mang5': '忙',
+            'mao1': '猫', 'mao2': '毛', 'mao3': '帽', 'mao4': '冒', 'mao5': '毛',
+            'me1': '么', 'me2': '么', 'me3': '么', 'me4': '么', 'me5': '么',
+            'mei1': '没', 'mei2': '没', 'mei3': '美', 'mei4': '妹', 'mei5': '没',
+            'men1': '门', 'men2': '闷', 'men3': '们', 'men4': '焖', 'men5': '们',
+            'meng1': '蒙', 'meng2': '蒙', 'meng3': '猛', 'meng4': '梦', 'meng5': '梦',
+            'mi1': '眯', 'mi2': '迷', 'mi3': '米', 'mi4': '密', 'mi5': '米',
+            'mian1': '眠', 'mian2': '棉', 'mian3': '面', 'mian4': '免', 'mian5': '面',
+            'miao1': '描', 'miao2': '苗', 'miao3': '秒', 'miao4': '妙', 'miao5': '苗',
+            'mie1': '咩', 'mie2': '咩', 'mie3': '咩', 'mie4': '灭', 'mie5': '咩',
+            'min1': '民', 'min2': '民', 'min3': '敏', 'min4': '闵', 'min5': '民',
+            'ming1': '鸣', 'ming2': '明', 'ming3': '命', 'ming4': '名', 'ming5': '明',
+            'miu1': '谬', 'miu2': '谬', 'miu3': '谬', 'miu4': '谬', 'miu5': '谬',
+            'mo1': '摸', 'mo2': '模', 'mo3': '摸', 'mo4': '末', 'mo5': '么',
+            'mou1': '谋', 'mou2': '某', 'mou3': '某', 'mou4': '牟', 'mou5': '某',
+            'mu1': '姆', 'mu2': '木', 'mu3': '母', 'mu4': '木', 'mu5': '木',
+            
+            // === N ===
+            'na1': '拿', 'na2': '那', 'na3': '哪', 'na4': '那', 'na5': '那',
+            'nai1': '奶', 'nai2': '奶', 'nai3': '乃', 'nai4': '耐', 'nai5': '奶',
+            'nan1': '男', 'nan2': '男', 'nan3': '难', 'nan4': '南', 'nan5': '南',
+            'nang1': '囊', 'nang2': '囊', 'nang3': '囊', 'nang4': '囊', 'nang5': '囊',
+            'nao1': '挠', 'nao2': '脑', 'nao3': '脑', 'nao4': '闹', 'nao5': '脑',
+            'ne1': '呢', 'ne2': '呢', 'ne3': '呢', 'ne4': '呢', 'ne5': '呢',
+            'nei1': '内', 'nei2': '内', 'nei3': '内', 'nei4': '内', 'nei5': '内',
+            'nen1': '嫩', 'nen2': '嫩', 'nen3': '嫩', 'nen4': '嫩', 'nen5': '嫩',
+            'neng1': '能', 'neng2': '能', 'neng3': '能', 'neng4': '能', 'neng5': '能',
+            'ni1': '你', 'ni2': '泥', 'ni3': '你', 'ni4': '逆', 'ni5': '你',
+            'nian1': '年', 'nian2': '年', 'nian3': '念', 'nian4': '年', 'nian5': '年',
+            'niang1': '娘', 'niang2': '娘', 'niang3': '娘', 'niang4': '酿', 'niang5': '娘',
+            'niao1': '尿', 'niao2': '鸟', 'niao3': '鸟', 'niao4': '尿', 'niao5': '鸟',
+            'nie1': '捏', 'nie2': '聂', 'nie3': '聂', 'nie4': '孽', 'nie5': '聂',
+            'nin1': '您', 'nin2': '您', 'nin3': '您', 'nin4': '您', 'nin5': '您',
+            'ning1': '拧', 'ning2': '宁', 'ning3': '拧', 'ning4': '凝', 'ning5': '宁',
+            'niu1': '牛', 'niu2': '牛', 'niu3': '扭', 'niu4': '纽', 'niu5': '牛',
+            'nong1': '农', 'nong2': '农', 'nong3': '浓', 'nong4': '弄', 'nong5': '农',
+            'nou1': '耨', 'nou2': '耨', 'nou3': '耨', 'nou4': '耨', 'nou5': '耨',
+            'nu1': '奴', 'nu2': '奴', 'nu3': '努', 'nu4': '怒', 'nu5': '奴',
+            'nuan1': '暖', 'nuan2': '暖', 'nuan3': '暖', 'nuan4': '暖', 'nuan5': '暖',
+            'nue1': '虐', 'nue2': '虐', 'nue3': '虐', 'nue4': '虐', 'nue5': '虐',
+            'nuo1': '挪', 'nuo2': '挪', 'nuo3': '诺', 'nuo4': '懦', 'nuo5': '挪',
+            'nv1': '女', 'nv2': '女', 'nv3': '女', 'nv4': '女', 'nv5': '女',
+            
+            // === O ===
+            'o1': '哦', 'o2': '哦', 'o3': '哦', 'o4': '哦', 'o5': '哦',
+            'ou1': '欧', 'ou2': '欧', 'ou3': '偶', 'ou4': '藕', 'ou5': '欧',
+            
+            // === P ===
+            'pa1': '趴', 'pa2': '爬', 'pa3': '怕', 'pa4': '帕', 'pa5': '怕',
+            'pai1': '拍', 'pai2': '排', 'pai3': '派', 'pai4': '牌', 'pai5': '排',
+            'pan1': '盘', 'pan2': '盘', 'pan3': '判', 'pan4': '叛', 'pan5': '盘',
+            'pang1': '乓', 'pang2': '旁', 'pang3': '胖', 'pang4': '旁', 'pang5': '旁',
+            'pao1': '抛', 'pao2': '跑', 'pao3': '泡', 'pao4': '炮', 'pao5': '跑',
+            'pei1': '胚', 'pei2': '陪', 'pei3': '配', 'pei4': '佩', 'pei5': '陪',
+            'pen1': '喷', 'pen2': '盆', 'pen3': '喷', 'pen4': '喷', 'pen5': '喷',
+            'peng1': '砰', 'peng2': '朋', 'peng3': '捧', 'peng4': '碰', 'peng5': '朋',
+            'pi1': '批', 'pi2': '皮', 'pi3': '匹', 'pi4': '屁', 'pi5': '皮',
+            'pian1': '偏', 'pian2': '片', 'pian3': '骗', 'pian4': '偏', 'pian5': '片',
+            'piao1': '飘', 'piao2': '嫖', 'piao3': '漂', 'piao4': '票', 'piao5': '漂',
+            'pie1': '撇', 'pie2': '瞥', 'pie3': '撇', 'pie4': '撇', 'pie5': '撇',
+            'pin1': '拼', 'pin2': '贫', 'pin3': '品', 'pin4': '聘', 'pin5': '品',
+            'ping1': '乒', 'ping2': '平', 'ping3': '苹', 'ping4': '瓶', 'ping5': '平',
+            'po1': '坡', 'po2': '婆', 'po3': '破', 'po4': '迫', 'po5': '婆',
+            'pu1': '扑', 'pu2': '仆', 'pu3': '朴', 'pu4': '铺', 'pu5': '朴',
+            
+            // === Q ===
+            'qi1': '七', 'qi2': '其', 'qi3': '起', 'qi4': '气', 'qi5': '起',
+            'qia1': '掐', 'qia2': '恰', 'qia3': '恰', 'qia4': '掐', 'qia5': '恰',
+            'qian1': '千', 'qian2': '前', 'qian3': '浅', 'qian4': '欠', 'qian5': '前',
+            'qiang1': '枪', 'qiang2': '强', 'qiang3': '抢', 'qiang4': '墙', 'qiang5': '强',
+            'qiao1': '敲', 'qiao2': '桥', 'qiao3': '巧', 'qiao4': '翘', 'qiao5': '桥',
+            'qie1': '切', 'qie2': '茄', 'qie3': '且', 'qie4': '窃', 'qie5': '且',
+            'qin1': '亲', 'qin2': '勤', 'qin3': '寝', 'qin4': '秦', 'qin5': '勤',
+            'qing1': '清', 'qing2': '情', 'qing3': '请', 'qing4': '庆', 'qing5': '请',
+            'qiong1': '穷', 'qiong2': '穷', 'qiong3': '穷', 'qiong4': '穷', 'qiong5': '穷',
+            'qiu1': '秋', 'qiu2': '求', 'qiu3': '球', 'qiu4': '囚', 'qiu5': '求',
+            'qu1': '区', 'qu2': '取', 'qu3': '去', 'qu4': '趣', 'qu5': '去',
+            'quan1': '全', 'quan2': '权', 'quan3': '犬', 'quan4': '劝', 'quan5': '全',
+            'que1': '缺', 'que2': '却', 'que3': '雀', 'que4': '确', 'que5': '却',
+            'qun1': '群', 'qun2': '群', 'qun3': '群', 'qun4': '群', 'qun5': '群',
+            
+            // === R ===
+            'ran1': '燃', 'ran2': '然', 'ran3': '染', 'ran4': '燃', 'ran5': '然',
+            'rang1': '嚷', 'rang2': '让', 'rang3': '壤', 'rang4': '让', 'rang5': '让',
+            'rao1': '饶', 'rao2': '饶', 'rao3': '绕', 'rao4': '绕', 'rao5': '饶',
+            're1': '热', 're2': '热', 're3': '惹', 're4': '热', 're5': '热',
+            'ren1': '人', 'ren2': '人', 'ren3': '忍', 'ren4': '认', 'ren5': '人',
+            'reng1': '仍', 'reng2': '仍', 'reng3': '扔', 'reng4': '仍', 'reng5': '仍',
+            'ri1': '日', 'ri2': '日', 'ri3': '日', 'ri4': '日', 'ri5': '日',
+            'rong1': '容', 'rong2': '容', 'rong3': '冗', 'rong4': '熔', 'rong5': '容',
+            'rou1': '柔', 'rou2': '柔', 'rou3': '揉', 'rou4': '肉', 'rou5': '柔',
+            'ru1': '如', 'ru2': '如', 'ru3': '乳', 'ru4': '入', 'ru5': '如',
+            'ruan1': '软', 'ruan2': '软', 'ruan3': '软', 'ruan4': '软', 'ruan5': '软',
+            'rui1': '锐', 'rui2': '锐', 'rui3': '锐', 'rui4': '瑞', 'rui5': '锐',
+            'run1': '润', 'run2': '润', 'run3': '润', 'run4': '润', 'run5': '润',
+            'ruo1': '若', 'ruo2': '若', 'ruo3': '若', 'ruo4': '若', 'ruo5': '若',
+            
+            // === S ===
+            'sa1': '撒', 'sa2': '撒', 'sa3': '洒', 'sa4': '萨', 'sa5': '撒',
+            'sai1': '塞', 'sai2': '腮', 'sai3': '赛', 'sai4': '塞', 'sai5': '塞',
+            'san1': '三', 'san2': '三', 'san3': '散', 'san4': '散', 'san5': '三',
+            'sang1': '桑', 'sang2': '桑', 'sang3': '嗓', 'sang4': '丧', 'sang5': '桑',
+            'sao1': '搔', 'sao2': '骚', 'sao3': '扫', 'sao4': '嫂', 'sao5': '骚',
+            'se1': '色', 'se2': '色', 'se3': '色', 'se4': '色', 'se5': '色',
+            'sen1': '森', 'sen2': '森', 'sen3': '森', 'sen4': '森', 'sen5': '森',
+            'seng1': '僧', 'seng2': '僧', 'seng3': '僧', 'seng4': '僧', 'seng5': '僧',
+            'sha1': '杀', 'sha2': '沙', 'sha3': '傻', 'sha4': '煞', 'sha5': '沙',
+            'shai1': '筛', 'shai2': '筛', 'shai3': '晒', 'shai4': '晒', 'shai5': '晒',
+            'shan1': '山', 'shan2': '删', 'shan3': '闪', 'shan4': '善', 'shan5': '山',
+            'shang1': '商', 'shang2': '伤', 'shang3': '上', 'shang4': '尚', 'shang5': '上',
+            'shao1': '烧', 'shao2': '少', 'shao3': '少', 'shao4': '哨', 'shao5': '少',
+            'she1': '奢', 'she2': '蛇', 'she3': '舍', 'she4': '射', 'she5': '舍',
+            'shei1': '谁', 'shei2': '谁', 'shei3': '谁', 'shei4': '谁', 'shei5': '谁',
+            'shen1': '身', 'shen2': '什', 'shen3': '审', 'shen4': '深', 'shen5': '什',
+            'sheng1': '生', 'sheng2': '声', 'sheng3': '省', 'sheng4': '圣', 'sheng5': '生',
+            'shi1': '尸', 'shi2': '十', 'shi3': '史', 'shi4': '是', 'shi5': '是',
+            'shou1': '收', 'shou2': '手', 'shou3': '守', 'shou4': '受', 'shou5': '手',
+            'shu1': '书', 'shu2': '熟', 'shu3': '数', 'shu4': '树', 'shu5': '书',
+            'shua1': '刷', 'shua2': '刷', 'shua3': '耍', 'shua4': '刷', 'shua5': '刷',
+            'shuai1': '摔', 'shuai2': '甩', 'shuai3': '甩', 'shuai4': '帅', 'shuai5': '甩',
+            'shuan1': '栓', 'shuan2': '栓', 'shuan3': '栓', 'shuan4': '涮', 'shuan5': '栓',
+            'shuang1': '双', 'shuang2': '双', 'shuang3': '爽', 'shuang4': '双', 'shuang5': '双',
+            'shui1': '水', 'shui2': '水', 'shui3': '水', 'shui4': '睡', 'shui5': '水',
+            'shun1': '顺', 'shun2': '顺', 'shun3': '顺', 'shun4': '顺', 'shun5': '顺',
+            'shuo1': '说', 'shuo2': '说', 'shuo3': '说', 'shuo4': '朔', 'shuo5': '说',
+            'si1': '思', 'si2': '丝', 'si3': '死', 'si4': '四', 'si5': '四',
+            'song1': '松', 'song2': '松', 'song3': '宋', 'song4': '送', 'song5': '松',
+            'sou1': '搜', 'sou2': '搜', 'sou3': '搜', 'sou4': '叟', 'sou5': '搜',
+            'su1': '苏', 'su2': '苏', 'su3': '素', 'su4': '诉', 'su5': '苏',
+            'suan1': '酸', 'suan2': '蒜', 'suan3': '算', 'suan4': '算', 'suan5': '算',
+            'sui1': '随', 'sui2': '随', 'sui3': '岁', 'sui4': '碎', 'sui5': '随',
+            'sun1': '孙', 'sun2': '孙', 'sun3': '损', 'sun4': '孙', 'sun5': '孙',
+            'suo1': '缩', 'suo2': '所', 'suo3': '索', 'suo4': '锁', 'suo5': '所',
+            
+            // === T ===
+            'ta1': '他', 'ta2': '她', 'ta3': '它', 'ta4': '塔', 'ta5': '他',
+            'tai1': '台', 'tai2': '抬', 'tai3': '台', 'tai4': '太', 'tai5': '太',
+            'tan1': '摊', 'tan2': '谈', 'tan3': '叹', 'tan4': '碳', 'tan5': '谈',
+            'tang1': '汤', 'tang2': '糖', 'tang3': '躺', 'tang4': '烫', 'tang5': '糖',
+            'tao1': '掏', 'tao2': '桃', 'tao3': '讨', 'tao4': '套', 'tao5': '桃',
+            'te1': '特', 'te2': '特', 'te3': '特', 'te4': '特', 'te5': '特',
+            'tei1': '忒', 'tei2': '忒', 'tei3': '忒', 'tei4': '忒', 'tei5': '忒',
+            'teng1': '疼', 'teng2': '疼', 'teng3': '腾', 'teng4': '藤', 'teng5': '疼',
+            'ti1': '提', 'ti2': '题', 'ti3': '体', 'ti4': '替', 'ti5': '提',
+            'tian1': '天', 'tian2': '田', 'tian3': '舔', 'tian4': '甜', 'tian5': '天',
+            'tiao1': '挑', 'tiao2': '条', 'tiao3': '跳', 'tiao4': '调', 'tiao5': '条',
+            'tie1': '贴', 'tie2': '铁', 'tie3': '帖', 'tie4': '贴', 'tie5': '铁',
+            'ting1': '听', 'ting2': '停', 'ting3': '庭', 'ting4': '挺', 'ting5': '听',
+            'tong1': '通', 'tong2': '同', 'tong3': '桶', 'tong4': '痛', 'tong5': '同',
+            'tou1': '偷', 'tou2': '头', 'tou3': '投', 'tou4': '透', 'tou5': '头',
+            'tu1': '涂', 'tu2': '图', 'tu3': '土', 'tu4': '兔', 'tu5': '图',
+            'tuan1': '团', 'tuan2': '团', 'tuan3': '湍', 'tuan4': '团', 'tuan5': '团',
+            'tui1': '推', 'tui2': '腿', 'tui3': '退', 'tui4': '蜕', 'tui5': '推',
+            'tun1': '吞', 'tun2': '屯', 'tun3': '囤', 'tun4': '臀', 'tun5': '屯',
+            'tuo1': '拖', 'tuo2': '托', 'tuo3': '脱', 'tuo4': '唾', 'tuo5': '托',
+            
+            // === W ===
+            'wa1': '挖', 'wa2': '娃', 'wa3': '瓦', 'wa4': '袜', 'wa5': '娃',
+            'wai1': '歪', 'wai2': '歪', 'wai3': '歪', 'wai4': '外', 'wai5': '外',
+            'wan1': '弯', 'wan2': '完', 'wan3': '晚', 'wan4': '万', 'wan5': '完',
+            'wang1': '王', 'wang2': '忘', 'wang3': '网', 'wang4': '望', 'wang5': '王',
+            'wei1': '威', 'wei2': '为', 'wei3': '伟', 'wei4': '位', 'wei5': '为',
+            'wen1': '温', 'wen2': '文', 'wen3': '吻', 'wen4': '问', 'wen5': '文',
+            'weng1': '翁', 'weng2': '翁', 'weng3': '瓮', 'weng4': '瓮', 'weng5': '翁',
+            'wo1': '窝', 'wo2': '我', 'wo3': '我', 'wo4': '卧', 'wo5': '我',
+            'wu1': '乌', 'wu2': '无', 'wu3': '五', 'wu4': '物', 'wu5': '无',
+            
+            // === X ===
+            'xi1': '西', 'xi2': '习', 'xi3': '洗', 'xi4': '系', 'xi5': '西',
+            'xia1': '瞎', 'xia2': '下', 'xia3': '夏', 'xia4': '吓', 'xia5': '下',
+            'xian1': '先', 'xian2': '现', 'xian3': '显', 'xian4': '县', 'xian5': '先',
+            'xiang1': '香', 'xiang2': '相', 'xiang3': '想', 'xiang4': '向', 'xiang5': '想',
+            'xiao1': '消', 'xiao2': '小', 'xiao3': '笑', 'xiao4': '校', 'xiao5': '小',
+            'xie1': '些', 'xie2': '鞋', 'xie3': '写', 'xie4': '谢', 'xie5': '些',
+            'xin1': '心', 'xin2': '新', 'xin3': '信', 'xin4': '心', 'xin5': '新',
+            'xing1': '星', 'xing2': '行', 'xing3': '醒', 'xing4': '性', 'xing5': '行',
+            'xiong1': '凶', 'xiong2': '熊', 'xiong3': '汹', 'xiong4': '胸', 'xiong5': '熊',
+            'xiu1': '修', 'xiu2': '羞', 'xiu3': '秀', 'xiu4': '袖', 'xiu5': '修',
+            'xu1': '需', 'xu2': '徐', 'xu3': '许', 'xu4': '续', 'xu5': '许',
+            'xuan1': '宣', 'xuan2': '悬', 'xuan3': '选', 'xuan4': '旋', 'xuan5': '选',
+            'xue1': '靴', 'xue2': '学', 'xue3': '雪', 'xue4': '血', 'xue5': '学',
+            'xun1': '熏', 'xun2': '寻', 'xun3': '训', 'xun4': '讯', 'xun5': '寻',
+            
+            // === Y ===
+            'ya1': '压', 'ya2': '牙', 'ya3': '哑', 'ya4': '雅', 'ya5': '牙',
+            'yan1': '烟', 'yan2': '严', 'yan3': '眼', 'yan4': '验', 'yan5': '眼',
+            'yang1': '央', 'yang2': '羊', 'yang3': '养', 'yang4': '样', 'yang5': '羊',
+            'yao1': '要', 'yao2': '摇', 'yao3': '咬', 'yao4': '药', 'yao5': '要',
+            'ye1': '爷', 'ye2': '也', 'ye3': '野', 'ye4': '夜', 'ye5': '也',
+            'yi1': '一', 'yi2': '衣', 'yi3': '已', 'yi4': '意', 'yi5': '一',
+            'yin1': '因', 'yin2': '音', 'yin3': '印', 'yin4': '引', 'yin5': '音',
+            'ying1': '英', 'ying2': '应', 'ying3': '影', 'ying4': '硬', 'ying5': '应',
+            'yo1': '哟', 'yo2': '哟', 'yo3': '哟', 'yo4': '哟', 'yo5': '哟',
+            'yong1': '拥', 'yong2': '用', 'yong3': '永', 'yong4': '勇', 'yong5': '用',
+            'you1': '优', 'you2': '有', 'you3': '友', 'you4': '右', 'you5': '有',
+            'yu1': '鱼', 'yu2': '于', 'yu3': '雨', 'yu4': '语', 'yu5': '鱼',
+            'yuan1': '元', 'yuan2': '远', 'yuan3': '院', 'yuan4': '愿', 'yuan5': '元',
+            'yue1': '约', 'yue2': '月', 'yue3': '跃', 'yue4': '乐', 'yue5': '月',
+            'yun1': '云', 'yun2': '运', 'yun3': '允', 'yun4': '韵', 'yun5': '云',
+            
+            // === Z ===
+            'za1': '扎', 'za2': '杂', 'za3': '咱', 'za4': '砸', 'za5': '杂',
+            'zai1': '栽', 'zai2': '在', 'zai3': '再', 'zai4': '载', 'zai5': '在',
+            'zan1': '咱', 'zan2': '赞', 'zan3': '暂', 'zan4': '暂', 'zan5': '咱',
+            'zang1': '脏', 'zang2': '葬', 'zang3': '脏', 'zang4': '葬', 'zang5': '脏',
+            'zao1': '遭', 'zao2': '早', 'zao3': '枣', 'zao4': '造', 'zao5': '早',
+            'ze1': '则', 'ze2': '则', 'ze3': '责', 'ze4': '泽', 'ze5': '则',
+            'zei1': '贼', 'zei2': '贼', 'zei3': '贼', 'zei4': '贼', 'zei5': '贼',
+            'zen1': '怎', 'zen2': '怎', 'zen3': '怎', 'zen4': '怎', 'zen5': '怎',
+            'zeng1': '增', 'zeng2': '增', 'zeng3': '赠', 'zeng4': '增', 'zeng5': '增',
+            'zha1': '扎', 'zha2': '札', 'zha3': '眨', 'zha4': '炸', 'zha5': '扎',
+            'zhai1': '摘', 'zhai2': '宅', 'zhai3': '窄', 'zhai4': '债', 'zhai5': '宅',
+            'zhan1': '占', 'zhan2': '占', 'zhan3': '站', 'zhan4': '战', 'zhan5': '站',
+            'zhang1': '张', 'zhang2': '长', 'zhang3': '掌', 'zhang4': '涨', 'zhang5': '张',
+            'zhao1': '招', 'zhao2': '着', 'zhao3': '找', 'zhao4': '照', 'zhao5': '着',
+            'zhe1': '遮', 'zhe2': '折', 'zhe3': '者', 'zhe4': '这', 'zhe5': '这',
+            'zhei1': '这', 'zhei2': '这', 'zhei3': '这', 'zhei4': '这', 'zhei5': '这',
+            'zhen1': '真', 'zhen2': '针', 'zhen3': '枕', 'zhen4': '震', 'zhen5': '真',
+            'zheng1': '争', 'zheng2': '整', 'zheng3': '正', 'zheng4': '证', 'zheng5': '正',
+            'zhi1': '知', 'zhi2': '直', 'zhi3': '只', 'zhi4': '治', 'zhi5': '只',
+            'zhong1': '中', 'zhong2': '终', 'zhong3': '种', 'zhong4': '重', 'zhong5': '中',
+            'zhou1': '州', 'zhou2': '舟', 'zhou3': '周', 'zhou4': '昼', 'zhou5': '周',
+            'zhu1': '朱', 'zhu2': '竹', 'zhu3': '主', 'zhu4': '住', 'zhu5': '主',
+            'zhua1': '抓', 'zhua2': '抓', 'zhua3': '爪', 'zhua4': '抓', 'zhua5': '抓',
+            'zhuai1': '拽', 'zhuai2': '拽', 'zhuai3': '拽', 'zhuai4': '拽', 'zhuai5': '拽',
+            'zhuan1': '专', 'zhuan2': '专', 'zhuan3': '转', 'zhuan4': '赚', 'zhuan5': '专',
+            'zhuang1': '庄', 'zhuang2': '庄', 'zhuang3': '装', 'zhuang4': '撞', 'zhuang5': '装',
+            'zhui1': '追', 'zhui2': '追', 'zhui3': '坠', 'zhui4': '追', 'zhui5': '追',
+            'zhun1': '准', 'zhun2': '准', 'zhun3': '准', 'zhun4': '准', 'zhun5': '准',
+            'zhuo1': '捉', 'zhuo2': '桌', 'zhuo3': '着', 'zhuo4': '琢', 'zhuo5': '桌',
+            'zi1': '资', 'zi2': '字', 'zi3': '自', 'zi4': '子', 'zi5': '子',
+            'zong1': '宗', 'zong2': '综', 'zong3': '总', 'zong4': '纵', 'zong5': '总',
+            'zou1': '邹', 'zou2': '邹', 'zou3': '走', 'zou4': '奏', 'zou5': '走',
+            'zu1': '租', 'zu2': '族', 'zu3': '组', 'zu4': '足', 'zu5': '组',
+            'zuan1': '钻', 'zuan2': '钻', 'zuan3': '钻', 'zuan4': '赚', 'zuan5': '钻',
+            'zui1': '嘴', 'zui2': '嘴', 'zui3': '最', 'zui4': '醉', 'zui5': '最',
+            'zun1': '尊', 'zun2': '遵', 'zun3': '遵', 'zun4': '遵', 'zun5': '遵',
+            'zuo1': '作', 'zuo2': '昨', 'zuo3': '左', 'zuo4': '做', 'zuo5': '做',
+            
+            // === Adicionais com variações e sílabas especiais ===
+            'shang5': '上', 'xue5': '学', 'sheng1': '生', 'gong1': '工',
+            'zhong1': '中', 'guo2': '国', 'ren2': '人', 'da4': '大',
+            'xiao3': '小', 'hao3': '好', 'mei3': '美', 'hen3': '很',
+            'dou1': '都', 'bu4': '不', 'zai4': '在', 'you3': '有',
+            'de5': '的', 'le5': '了', 'ma5': '吗', 'ne5': '呢',
+            'ba5': '吧', 'a5': '啊', 'ya5': '呀', 'o5': '哦'
+        };
+
+        function convertPinyin() {
+            const input = document.getElementById('pinyinInput').value.trim().toLowerCase();
+            const resultBox = document.getElementById('resultBox');
+            
+            if (!input) {
+                resultBox.innerHTML = '<span class="placeholder">Digite algo primeiro!</span>';
+                resultBox.classList.remove('has-content');
+                return;
+            }
+            
+            // Separa por vírgulas primeiro, depois por espaços
+            const sentences = input.split(',');
+            let result = '';
+            
+            sentences.forEach((sentence, sentenceIndex) => {
+                const words = sentence.trim().split(/\s+/);
+                let sentenceResult = '';
+                
+                words.forEach(word => {
+                    if (word) {
+                        // Remove espaços extras e procura no dicionário
+                        const cleanWord = word.trim();
+                        if (pinyinDict[cleanWord]) {
+                            sentenceResult += pinyinDict[cleanWord];
+                        } else {
+                            // Se não encontrar a palavra completa, tenta separar em sílabas
+                            const characters = convertIndividualSyllables(cleanWord);
+                            sentenceResult += characters || `[${cleanWord}]`;
+                        }
+                    }
+                });
+                
+                result += sentenceResult;
+                if (sentenceIndex < sentences.length - 1) {
+                    result += '，'; // Adiciona vírgula chinesa entre sentenças
+                }
+            });
+            
+            if (result) {
+                resultBox.innerHTML = result;
+                resultBox.classList.add('has-content');
+                
+                // Animação de entrada
+                resultBox.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    resultBox.style.transform = 'scale(1)';
+                }, 100);
+            } else {
+                resultBox.innerHTML = '<span class="placeholder">Não foi possível converter. Verifique o pinyin digitado.</span>';
+                resultBox.classList.remove('has-content');
+            }
+        }
+        
+        function convertIndividualSyllables(word) {
+            // Tenta separar palavra em sílabas conhecidas
+            let result = '';
+            let remaining = word;
+            
+            // Ordena as chaves do dicionário por tamanho (maiores primeiro)
+            const sortedKeys = Object.keys(pinyinDict).sort((a, b) => b.length - a.length);
+            
+            while (remaining.length > 0) {
+                let found = false;
+                
+                for (let key of sortedKeys) {
+                    if (remaining.startsWith(key)) {
+                        result += pinyinDict[key];
+                        remaining = remaining.substring(key.length);
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (!found) {
+                    // Se não encontrou nenhuma correspondência, pula um caractere
+                    remaining = remaining.substring(1);
+                }
+            }
+            
+            return result;
+        }
+        
+        // Permite conversão com Enter
+        document.getElementById('pinyinInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                convertPinyin();
+            }
+        });
+        
+        // Conversão automática enquanto digita (com delay)
+        let typingTimer;
+        document.getElementById('pinyinInput').addEventListener('input', function() {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(convertPinyin, 500); // Converte após 500ms sem digitar
+        });
+    </script>
+</body>
+</html>

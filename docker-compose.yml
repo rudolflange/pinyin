@@ -1,0 +1,24 @@
+services:
+  web:
+    image: node:latest
+    container_name: web_server
+    restart: unless-stopped
+    ports:
+      - "5151:5151"
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: >
+      sh -c "
+      echo 'Installing express...' &&
+      npm install express &&
+      echo 'Starting server...' &&
+      node -e \"
+        const express = require('express');
+        const path = require('path');
+        const app = express();
+        app.use(express.static(path.join(__dirname)));
+        app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+        app.listen(5151, () => console.log('Server running on port 5151'));
+      \"
+      "
